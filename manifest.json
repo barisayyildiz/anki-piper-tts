@@ -1,0 +1,10 @@
+{
+    "name": "Piper TTS Anki Addon",
+    "package": "anki_piper_tts",
+    "version": "0.1.0",
+    "conflicts": [],
+    "mod": 0,
+    "min_point_version": 240400,
+    "max_point_version": 240400,
+    "branch_index": 1
+}

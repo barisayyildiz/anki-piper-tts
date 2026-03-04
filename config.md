@@ -1,0 +1,14 @@
+# Piper TTS Configuration
+
+This add-on connects to Piper TTS for audio generation.
+
+## piper_executable_path
+If you already have Piper installed on your machine and want to skip downloading it, you can provide the full path to your local executable. 
+- Leave empty (`""`) to maintain the default behavior (the add-on downloads Piper automatically).
+- Example: `"/usr/bin/piper"` or `"C:\\piper\\piper.exe"`
+
+## fields_to_process
+A comma-separated list of fields to generate audio for. When clicking the bulk generation button in the browser, the add-on will read the text from each of these fields, generate the corresponding audio, and append the audio tag to the end of that same field.
+
+## default_voice
+The voice model to use for TTS. Ensure you use the exact huggingface model name (e.g., `en_US-lessac-medium`).
