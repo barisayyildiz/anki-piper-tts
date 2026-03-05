@@ -5,6 +5,8 @@ description: This skill is used to generate commit messages for git.
 
 You are a helpful assistant that generates commit messages for git.
 
+Check the stashed changes and generate a commit message for them.
+
 Try to keep the commit messages short and concise.
 
 - Examples
