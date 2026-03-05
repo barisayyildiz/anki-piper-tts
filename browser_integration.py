@@ -1,4 +1,5 @@
 import os
+import re
 from aqt import mw
 from aqt.qt import *
 from aqt.utils import showInfo, showWarning
@@ -70,10 +71,17 @@ def on_bulk_generate(browser: Browser):
             if not text.strip():
                 continue
                 
-            sound_tag = tts.generate_and_add_to_anki(text, voice_name)
+            clean_text = re.sub(r'\[sound:.*?\]', '', text)
+            if not clean_text.strip():
+                continue
+                
+            sound_tag = tts.generate_and_add_to_anki(clean_text, voice_name)
             if sound_tag:
-                 # Append the sound tag to the end of the field content
-                 note[field_name] = text + " " + sound_tag
+                 if re.search(r'\[sound:.*?\]', text):
+                     new_text = re.sub(r'\[sound:.*?\]', sound_tag, text, count=1)
+                     note[field_name] = new_text
+                 else:
+                     note[field_name] = text + " " + sound_tag
                  note_updated = True
         
         if note_updated:

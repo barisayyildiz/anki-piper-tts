@@ -1,4 +1,5 @@
 import os
+import re
 from aqt import mw
 from aqt.editor import Editor
 from aqt.qt import *
@@ -48,16 +49,25 @@ def on_generate_audio(editor: Editor):
 
     # Step 3: Generate Audio
     mw.progress.start(label="Generating audio...", immediate=True)
-    sound_tag = tts.generate_and_add_to_anki(text, voice_name)
+    clean_text = re.sub(r'\[sound:.*?\]', '', text)
+    sound_tag = ""
+    if clean_text.strip():
+        sound_tag = tts.generate_and_add_to_anki(clean_text, voice_name)
     mw.progress.finish()
     
     if sound_tag:
-        # Append the sound tag to the field
+        # Update or append the sound tag to the field
         # Use editor.currentField and editor.loadNote() to refresh UI
         current_text = editor.note.fields[current_field]
-        editor.note.fields[current_field] = current_text + " " + sound_tag
+        if re.search(r'\[sound:.*?\]', current_text):
+            new_text = re.sub(r'\[sound:.*?\]', sound_tag, current_text, count=1)
+            editor.note.fields[current_field] = new_text
+        else:
+            editor.note.fields[current_field] = current_text + " " + sound_tag
         editor.loadNote()
         # Optionally, save note immediately, but generally we let the user hit Save
+    elif not clean_text.strip():
+        showWarning("The selected field only contains audio tags. Please add some text.")
     else:
         showWarning("Failed to generate audio. Check the error console or logs.")
 
