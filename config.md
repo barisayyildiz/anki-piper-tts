@@ -12,3 +12,6 @@ A comma-separated list of fields to generate audio for. When clicking the bulk g
 
 ## default_voice
 The voice model to use for TTS. Ensure you use the exact huggingface model name (e.g., `en_US-lessac-medium`).
+
+## override_audio
+Enable this boolean value (`true` or `false`) to allow replacing existing audio in the specified fields. If false, existing generated audio is kept intact.

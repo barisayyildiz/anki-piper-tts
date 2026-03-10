@@ -27,6 +27,12 @@ def on_generate_audio(editor: Editor):
         return
         
     config = mw.addonManager.getConfig(__name__)
+    override_audio = config.get("override_audio", False)
+    
+    if re.search(r'\[sound:.*?\]', text) and not override_audio:
+        showInfo("Field already contains audio and override is disabled. Skipping.")
+        return
+        
     voice_name = config.get("default_voice", "en_US-lessac-medium")
 
     # Step 1: Ensure executable exists

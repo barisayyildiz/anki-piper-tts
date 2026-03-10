@@ -1,1 +1,1 @@
-{"config": {"fields_to_process": "Front,Sentence", "piper_executable_path": "", "default_voice": "de_DE-thorsten-medium", "bulk_source_field": "example1", "bulk_target_field": "example1"}}
+{"config": {"fields_to_process": "Sentence1", "piper_executable_path": "", "default_voice": "en_US-lessac-medium", "override_audio": false}}

@@ -71,6 +71,9 @@ def on_bulk_generate(browser: Browser):
             if not text.strip():
                 continue
                 
+            if re.search(r'\[sound:.*?\]', text) and not config.get("override_audio", False):
+                continue
+                
             clean_text = re.sub(r'\[sound:.*?\]', '', text)
             if not clean_text.strip():
                 continue
