@@ -1,6 +1,5 @@
 {
     "fields_to_process": "Text, Audio",
-    "piper_executable_path": "",
     "default_voice": "en_US-lessac-medium",
     "override_audio": false
 }

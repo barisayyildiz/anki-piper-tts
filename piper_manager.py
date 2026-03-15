@@ -58,16 +58,6 @@ def get_voices_dir() -> Path:
 
 def get_piper_executable_path() -> Path:
     """Get the full path to the piper executable."""
-    from aqt import mw
-    if mw is not None:
-        config = mw.addonManager.getConfig(__name__)
-        if config and config.get("piper_executable_path"):
-            custom_path = Path(config["piper_executable_path"])
-            if custom_path.exists():
-                return custom_path
-            else:
-                print(f"Custom piper executable path not found: {custom_path}")
-
     piper_dir = get_piper_dir()
     exe_name = "piper.exe" if platform.system() == "Windows" else "piper"
     

@@ -19,7 +19,6 @@ class SettingsDialog(QDialog):
         form_layout = QFormLayout()
         
         self.fields_to_process_input = QLineEdit(self.config.get("fields_to_process", "Text, Audio"))
-        self.piper_exe_input = QLineEdit(self.config.get("piper_executable_path", ""))
         
         self.default_voice_input = QComboBox()
         self.default_voice_input.setEditable(True)
@@ -48,7 +47,6 @@ class SettingsDialog(QDialog):
         self.override_audio_checkbox.setChecked(self.config.get("override_audio", False))
         
         form_layout.addRow("Fields to process (comma-separated):", self.fields_to_process_input)
-        form_layout.addRow("Piper Executable Path (Optional):", self.piper_exe_input)
         form_layout.addRow("Default Voice:", voice_layout)
         form_layout.addRow("Override existing audio:", self.override_audio_checkbox)
         
@@ -64,7 +62,6 @@ class SettingsDialog(QDialog):
         
     def accept(self):
         self.config["fields_to_process"] = self.fields_to_process_input.text()
-        self.config["piper_executable_path"] = self.piper_exe_input.text()
         self.config["default_voice"] = self.default_voice_input.currentText()
         self.config["override_audio"] = self.override_audio_checkbox.isChecked()
         

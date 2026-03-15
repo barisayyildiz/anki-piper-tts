@@ -36,11 +36,6 @@ You can configure the add-on by going to **Tools > Add-ons**, selecting **Piper 
 - **Default Voice** (`default_voice`):
   The voice model to use for TTS. Make sure to use the exact Huggingface model format. For example: `en_US-lessac-medium`, `de_DE-thorsten-medium`, etc.
 
-- **Piper Executable Path (Optional)** (`piper_executable_path`):
-  If you already have Piper installed on your machine and want to skip downloading it, you can provide the full absolute path to your local `piper` executable.
-  - Leave empty (`""`) to maintain the default behavior (the add-on downloads Piper automatically).
-  - Example: `"/usr/bin/piper"` or `"C:\\piper\\piper.exe"`
-
 ## Troubleshooting
 
 - **No audio generated**: Ensure that the configured fields exactly match the field names in your Note Type. Check your internet connection the first time you use a new voice or run the add-on, as it needs to download Piper and the model files.
