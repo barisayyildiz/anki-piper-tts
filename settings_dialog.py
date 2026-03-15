@@ -1,6 +1,7 @@
 from aqt import mw
 from aqt.qt import *
 from .piper_manager import get_voices_dir
+from .downloader_dialog import VoiceDownloaderDialog
 
 class SettingsDialog(QDialog):
     def __init__(self, parent=None):
@@ -36,12 +37,19 @@ class SettingsDialog(QDialog):
         self.default_voice_input.addItems(sorted(list(available_voices)))
         self.default_voice_input.setCurrentText(current_voice)
         
+        self.download_voices_btn = QPushButton("Download New Voices...")
+        self.download_voices_btn.clicked.connect(self.open_downloader)
+        
+        voice_layout = QHBoxLayout()
+        voice_layout.addWidget(self.default_voice_input)
+        voice_layout.addWidget(self.download_voices_btn)
+        
         self.override_audio_checkbox = QCheckBox()
         self.override_audio_checkbox.setChecked(self.config.get("override_audio", False))
         
         form_layout.addRow("Fields to process (comma-separated):", self.fields_to_process_input)
         form_layout.addRow("Piper Executable Path (Optional):", self.piper_exe_input)
-        form_layout.addRow("Default Voice:", self.default_voice_input)
+        form_layout.addRow("Default Voice:", voice_layout)
         form_layout.addRow("Override existing audio:", self.override_audio_checkbox)
         
         layout.addLayout(form_layout)
@@ -62,3 +70,25 @@ class SettingsDialog(QDialog):
         
         mw.addonManager.writeConfig(self.addon_name, self.config)
         super().accept()
+
+    def open_downloader(self):
+        dialog = VoiceDownloaderDialog(self)
+        dialog.exec()
+        self.refresh_voices()
+
+    def refresh_voices(self):
+        current_voice = self.default_voice_input.currentText()
+        self.default_voice_input.clear()
+        
+        available_voices = set()
+        voices_dir = get_voices_dir()
+        if voices_dir.exists():
+            for f in voices_dir.iterdir():
+                if f.is_file() and f.name.endswith(".onnx"):
+                    available_voices.add(f.stem)
+                    
+        if current_voice:
+            available_voices.add(current_voice)
+            
+        self.default_voice_input.addItems(sorted(list(available_voices)))
+        self.default_voice_input.setCurrentText(current_voice)
