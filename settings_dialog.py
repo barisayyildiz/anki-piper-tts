@@ -1,5 +1,6 @@
 from aqt import mw
 from aqt.qt import *
+from .piper_manager import get_voices_dir
 
 class SettingsDialog(QDialog):
     def __init__(self, parent=None):
@@ -18,7 +19,22 @@ class SettingsDialog(QDialog):
         
         self.fields_to_process_input = QLineEdit(self.config.get("fields_to_process", "Text, Audio"))
         self.piper_exe_input = QLineEdit(self.config.get("piper_executable_path", ""))
-        self.default_voice_input = QLineEdit(self.config.get("default_voice", "en_US-lessac-medium"))
+        
+        self.default_voice_input = QComboBox()
+        self.default_voice_input.setEditable(True)
+        current_voice = self.config.get("default_voice", "en_US-lessac-medium")
+        
+        available_voices = set()
+        voices_dir = get_voices_dir()
+        if voices_dir.exists():
+            for f in voices_dir.iterdir():
+                if f.is_file() and f.name.endswith(".onnx"):
+                    # Remove the .onnx extension to get the voice name
+                    available_voices.add(f.stem)
+                    
+        available_voices.add(current_voice)
+        self.default_voice_input.addItems(sorted(list(available_voices)))
+        self.default_voice_input.setCurrentText(current_voice)
         
         self.override_audio_checkbox = QCheckBox()
         self.override_audio_checkbox.setChecked(self.config.get("override_audio", False))
@@ -41,7 +57,7 @@ class SettingsDialog(QDialog):
     def accept(self):
         self.config["fields_to_process"] = self.fields_to_process_input.text()
         self.config["piper_executable_path"] = self.piper_exe_input.text()
-        self.config["default_voice"] = self.default_voice_input.text()
+        self.config["default_voice"] = self.default_voice_input.currentText()
         self.config["override_audio"] = self.override_audio_checkbox.isChecked()
         
         mw.addonManager.writeConfig(self.addon_name, self.config)
