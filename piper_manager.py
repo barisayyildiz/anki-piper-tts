@@ -73,10 +73,18 @@ def get_piper_executable_path() -> Path:
     return direct_path
 
 def download_file(url: str, dest_path: Path):
-    """Download a file with a basic progress print."""
+    """Download a file with a basic progress print and UI event pumping."""
     print(f"Downloading {url} to {dest_path}...")
+    def reporthook(blocknum, blocksize, totalsize):
+        try:
+            from aqt import mw
+            if mw and mw.app:
+                mw.app.processEvents()
+        except:
+            pass
+            
     try:
-        urllib.request.urlretrieve(url, dest_path)
+        urllib.request.urlretrieve(url, dest_path, reporthook=reporthook)
     except Exception as e:
         print(f"Failed to download {url}: {e}")
         raise

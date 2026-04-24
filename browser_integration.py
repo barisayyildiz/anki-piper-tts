@@ -26,33 +26,63 @@ def on_bulk_generate(browser: Browser):
         showWarning("No fields specified for processing.")
         return
 
+    # Setup Progress Dialog
+    progress = QProgressDialog("Checking Piper TTS executable...", "Cancel", 0, len(selected_cids) + 2, browser)
+    progress.setWindowTitle("Piper TTS Progress")
+    progress.setWindowModality(Qt.WindowModality.WindowModal)
+    progress.setMinimumDuration(0)
+    progress.setValue(0)
+    progress.show()
+    mw.app.processEvents()
+
     # Step 1: Ensure Piper
-    mw.progress.start(label="Checking Piper TTS executable...", immediate=True)
     executable_ready = piper_manager.ensure_piper_executable()
-    mw.progress.finish()
+    
+    if progress.wasCanceled():
+        progress.close()
+        return
+        
+    progress.setValue(1)
+    mw.app.processEvents()
     
     if not executable_ready:
+        progress.close()
         showWarning("Failed to setup Piper TTS executable.")
         return
 
     # Step 2: Ensure Voice
-    mw.progress.start(label=f"Checking voice model ({voice_name})...", immediate=True)
+    progress.setLabelText(f"Checking voice model ({voice_name})...")
+    mw.app.processEvents()
+    
     voice_ready = piper_manager.ensure_voice(voice_name)
-    mw.progress.finish()
+    
+    if progress.wasCanceled():
+        progress.close()
+        return
+        
+    progress.setValue(2)
+    mw.app.processEvents()
     
     if not voice_ready:
+        progress.close()
         showWarning(f"Failed to setup voice model '{voice_name}'.")
         return
 
     # Step 3: Process cards
-    mw.progress.start(label="Generating audio for selected notes...", max=len(selected_cids), immediate=True)
+    progress.setLabelText("Generating audio for selected notes...")
+    mw.app.processEvents()
     
     processed_notes = set() # Avoid doing the same note multiple times if multiple cards are selected
     success_count = 0
     fail_count = 0
     
     for _idx, cid in enumerate(selected_cids):
-        mw.progress.update(value=_idx)
+        if progress.wasCanceled():
+            break
+            
+        progress.setValue(_idx + 2)
+        mw.app.processEvents()
+        
         card = mw.col.getCard(cid)
         note = card.note()
         
@@ -93,7 +123,8 @@ def on_bulk_generate(browser: Browser):
         else:
              fail_count += 1
 
-    mw.progress.finish()
+    progress.setValue(len(selected_cids) + 2)
+    progress.close()
     
     # Reload the browser rows
     browser.model.reset()
